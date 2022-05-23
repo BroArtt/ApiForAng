@@ -39,8 +39,8 @@ var app = builder.Build();
 
 List<Item> userItems = new List<Item> { };
 
-app.UseStaticFiles();
-
+    app.UseStaticFiles();
+    //Відправка html
     app.MapGet("/", async (HttpContext context) =>
     {
         var content = await File.ReadAllTextAsync("wwwroot/index.html");
@@ -48,7 +48,7 @@ app.UseStaticFiles();
         await context.Response.WriteAsync(content);
 
     });
-    //Створення пустого таска
+    //Створення пустого ітема
     app.MapPost("/rest/checklist", (HttpContext context, ApplicationContext appcontext) =>
     {
         var responseResult = 0;
@@ -74,31 +74,32 @@ app.UseStaticFiles();
             message = "Token Error";
         }
     });
-    app.MapGet("rest/checklist", (HttpContext context, ApplicationContext appcontext) =>
+    //відправка всіх ітемів
+    app.MapGet("rest/checklist", (HttpContext context) =>
     {
         context.Response.WriteAsJsonAsync<List<Item>>(userItems);
     });
-
+    // видача нового токена
     app.MapGet("/auth/refresh", (HttpContext context) =>
     {
 
     });
-
+    //
     app.MapPut("rest/checklist/{id}", (int id, HttpContext context, ApplicationContext application) =>
     {
         var result = context.Request.ReadFromJsonAsync<Item>().Result;
         userItems.FirstOrDefault(u => u._id == id).isCompleted = result.isCompleted;
         userItems.FirstOrDefault(u => u._id == id).title = result.title;
     });
-
-app.MapDelete("rest/checklist/{id}", (int id, HttpContext context, ApplicationContext application) =>
+    //збереження змін
+    app.MapDelete("rest/checklist/{id}", (int id, HttpContext context, ApplicationContext application) =>
 {
     var item = userItems.FirstOrDefault(u => u._id == id);
     userItems.Remove(item);
     context.Response.StatusCode = 200;
 });
-//Регистриция
-app.MapPost("/auth/sign-up", (HttpContext context, ApplicationContext apcontext) =>
+    //Реєстрація
+    app.MapPost("/auth/sign-up", (HttpContext context, ApplicationContext apcontext) =>
  {
      var userJson = context.Request.ReadFromJsonAsync<User>();
      var responseResult = 0;
@@ -125,7 +126,7 @@ app.MapPost("/auth/sign-up", (HttpContext context, ApplicationContext apcontext)
      context.Response.StatusCode = responseResult;
      context.Response.Headers.GrpcMessage = message;
  });
-    //Аутентификация
+    //Аутентифікация
     app.MapPost("/auth/sign-in", (HttpContext context, ApplicationContext apcontext) =>
     {
         var userJson = context.Request.ReadFromJsonAsync<User>();
