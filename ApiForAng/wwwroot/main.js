@@ -222,7 +222,6 @@ class RegistrationComponent {
     }
     registration() {
         console.log('Started registration');
-        debugger;
         if (!this.registrationForm.valid) {
             console.log('Error registration');
             this.registrationForm.markAllAsTouched();

@@ -2256,7 +2256,6 @@ class ItemService {
         });
     }
     getChecklist() {
-        debugger;
         const a = src_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].host + this.listUrl;
         this.http.get(a, { responseType: 'json' })
             .subscribe((items) => {
